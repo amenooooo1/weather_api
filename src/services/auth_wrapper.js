@@ -6,7 +6,7 @@ const AuthWrapper = () => {
 
     const userLogged = localStorage.getItem('isLoggedIn');
 
-    return userLogged
+    return (userLogged === 'false' || userLogged === undefined || userLogged === null)
         ? <Navigate
             to="/home"
             replace
