@@ -1,11 +1,14 @@
+import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react';
 
 import { useNavigate } from 'react-router-dom';
+import AsyncSelect from 'react-select/async';
 import Last3Context from '../../context/Last3Context';
 import withLoading from '../../hocs/withLoading';
 
 import { getWeather } from '../../services/api';
 import { useAuth } from '../../services/auth';
+import { GEO_API_URL, geoApiOptions } from '../../services/geoApiOptions';
 
 // const Home = () => {
 //     const [weather, setWeather] = useState(null);
@@ -77,9 +80,7 @@ const Home = (props) => {
         setSearch('')
       }
     } catch (error) {
-      //console.log(error);
-      setError('Please enter a valid city!');
-      //setWeather(null);
+      setError('No result found!');
       setSearch('')
     }
     finally {
@@ -90,6 +91,10 @@ const Home = (props) => {
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   }
+
+  // const handleSOnChange = (searchData) => {
+  //   setSearch(searchData);
+  // }
   const handleSearchSubmit = () => {
     if (search) {
       fetchWeather();
@@ -99,74 +104,131 @@ const Home = (props) => {
   }
 
   const addToContext = (weatherItem) => {
-    // if (weatherData) {
-    //   weatherData.map(item => (
-    //     item.name === weatherItem.name ? null : handleAdd(weatherItem)
+    handleAdd(weatherItem);
+    // if (weatherData.length > 1) {
+    //   weatherData.find(item => (
+    //     item.name === weatherItem.name ? alert('iff') : alert('add')
     //   ))
     // }
+    // else {
+    //   console.log('else')
+    //   //handleAdd(weatherItem)
+    // }
+    // if (weatherData.length === 3) {
+    //   const newWeatherData = [...weatherData];
+    //   newWeatherData.shift();
+    //   newWeatherData.push(weatherItem);
+    //   setWeatherData(newWeatherData);
+    //   localStorage.setItem('weather', JSON.stringify(newWeatherData));
+    // } else {
+    //   const newData = [...weatherData, weatherItem];
+    //   setWeatherData(newData);
+    //   localStorage.setItem('weather', JSON.stringify(newData));
+    // }
+  }
+
+  const handleAdd = (weatherItem) => {
     if (weatherData.length === 3) {
       const newWeatherData = [...weatherData];
       newWeatherData.shift();
       newWeatherData.push(weatherItem);
       setWeatherData(newWeatherData);
       localStorage.setItem('weather', JSON.stringify(newWeatherData));
-    } else {
+    }
+    else {
       const newData = [...weatherData, weatherItem];
       setWeatherData(newData);
       localStorage.setItem('weather', JSON.stringify(newData));
     }
+  }
+
+  const showDetails = (item) => {
+    setWeather(item);
+  }
+
+  // const removeItem = (item) => {
+  //   const newData = weatherData.filter(i => i.name !== item.name);
+  //   setWeatherData(newData);
+  //   localStorage.setItem('weather', JSON.stringify(newData));
+  // }
+
+  const removeItem = (item, index) => {
+    const newData = [...weatherData];
+    newData.splice(index, 1);
+    setWeatherData(newData);
+    localStorage.setItem('weather', JSON.stringify(newData));
+    console.log(weatherData);
 
   }
 
-  // const handleAdd = (weatherItem) => {
-  //   if (weatherData.length === 3) {
-  //     const newWeatherData = [...weatherData];
-  //     newWeatherData.shift();
-  //     newWeatherData.push(weatherItem);
-  //     setWeatherData(newWeatherData);
-  //     localStorage.setItem('weather', JSON.stringify(newWeatherData));
-  //   } else {
-  //     const newData = [...weatherData, weatherItem];
-  //     setWeatherData(newData);
-  //     localStorage.setItem('weather', JSON.stringify(newData));
-  //   }
-
-  // }
+  // const loadOptions = (inputValue) => {
+  //   return fetch(`${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`, geoApiOptions)
+  //     .then((response) => response.json())
+  //     .then((response) => console.log(response))
+  //     .catch(err => console.error(err));
+  // };
 
   useEffect(() => {
+    if (localStorage.getItem('weather')) {
+      setWeather(JSON.parse(localStorage.getItem('weather')).slice(-1)[0])
+    }
+
     props.setLoading(false);
   }, []);
 
 
   return (
-    <>
-      <button onClick={handleLogout}>Logout</button>
-      <div className='home-container'>
+    <div className='home'>
+      <header>
         <div className='search'>
-          <input type="text" placeholder="Enter a city" value={search} onChange={handleSearchChange} onKeyDown={(e) => {
+          <input className='search-input' type="text" placeholder="Enter a city" value={search} onChange={handleSearchChange} onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleSearchSubmit();
             }
           }} />
-          <button onClick={() => handleSearchSubmit()}>Search</button>
+          <button className='search-btn' onClick={() => handleSearchSubmit()}>Search</button>
+          <div className='error'>
+            {error && <div>{error}</div>}
+          </div>
         </div>
-      </div>
-      <div className='error'>
-        {error && <div>{error}</div>}
-      </div>
-      {weather
-        && <div className='weather-details'>
-          <h1>{weather.weather[0].main}</h1>
-          <h1>{weather.name}</h1>
+        <button className='logout-btn' onClick={handleLogout}>Logout</button>
+      </header>
+      <div className='weather'>
+        <div className='weather-context'>
+          {weatherData && weatherData.map((item, index) => (
+            <div className='weather-context-item' key={index}>
+              <h1 className='weather-context-item-title' onClick={() => showDetails(item)}>{item.name}</h1>
+              <p className='hide' onClick={() => removeItem(item, index)}>X</p>
+            </div>
+          ))}
         </div>
-      }
+        {weather
+          && <div className='weather-details'>
+            <h1 className='weather-details-name'>{weather.name}</h1>
+            <h1 className='weather-details-temp'>{(weather.main.temp - 273.15).toFixed()}°C</h1>
+            <h1 className='weather-details-status'>{weather.weather[0].main}</h1>
+            <div className='weather-details-hl'>
+              <h1 className='weather-details-high'>H: {(weather.main.temp_min - 273.15).toFixed()}°C</h1>
+              <h1 className='weather-details-low'>L: {(weather.main.temp_min - 273.15).toFixed()}°C</h1></div>
+            <div className='weather-details-specs'>
+              <h1 className='weather-details-feels'>Feels like {(weather.main.feels_like - 273.15).toFixed()}°C</h1>
+              <h1 className='weather-details-wind'>Wind {(weather.wind.speed).toFixed()}Km/h</h1>
+              <h1 className='weather-details-humidity'>Humidity %{weather.main.humidity}</h1>
+              <h1 className='weather-details-pressure'>Pressure {weather.main.pressure}hPa</h1>
+              <h1 className='weather-details-clouds'>Clouds %{weather.clouds.all}</h1>
+            </div>
 
-      {weatherData && weatherData.map((item, index) => (
-        <div key={index}>
-          <h1>{item.name}</h1>
-        </div>
-      ))}
-    </>
+
+          </div>
+        }
+      </div>
+      {/* <AsyncSelect
+        placeholder="Enter a city"
+        debounceTimeout={600}
+        loadOptions={loadOptions}
+        value={search}
+        onChange={handleSOnChange} /> */}
+    </div>
   )
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext } from "react";
 
 const Last3Context = createContext(); // general state
 
@@ -10,9 +10,11 @@ export const Last3Provider = ({ children }) => {
 
   const [weatherData, setWeatherData] = useState(defaultValue);
 
+
+
   const value = { // general store
     weatherData,
-    setWeatherData
+    setWeatherData,
   };
 
   return (
