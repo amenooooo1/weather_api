@@ -56,10 +56,13 @@ import { GEO_API_URL, geoApiOptions } from '../../services/geoApiOptions';
 // }
 
 const Home = (props) => {
+  const GITHUB_URL = 'https://github.com/amenooooo1';
+
   const [weather, setWeather] = useState(null);
   const { weatherData, setWeatherData } = useContext(Last3Context);
   const [search, setSearch] = useState('');
   const [error, setError] = useState(null);
+  const [sunrise, setSunrise] = useState(null);
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -169,10 +172,10 @@ const Home = (props) => {
   // };
 
   useEffect(() => {
+    // show last searched city's weather data
     if (localStorage.getItem('weather')) {
       setWeather(JSON.parse(localStorage.getItem('weather')).slice(-1)[0])
     }
-
     props.setLoading(false);
   }, []);
 
@@ -212,13 +215,14 @@ const Home = (props) => {
               <h1 className='weather-details-low'>L: {(weather.main.temp_min - 273.15).toFixed()}°C</h1></div>
             <div className='weather-details-specs'>
               <h1 className='weather-details-feels'>Feels like {(weather.main.feels_like - 273.15).toFixed()}°C</h1>
-              <h1 className='weather-details-wind'>Wind {(weather.wind.speed).toFixed()}Km/h</h1>
+              <h1 className='weather-details-wind'>Wind {((weather.wind.speed).toFixed()) * 3.6}Km/h</h1>
               <h1 className='weather-details-humidity'>Humidity %{weather.main.humidity}</h1>
               <h1 className='weather-details-pressure'>Pressure {weather.main.pressure}hPa</h1>
               <h1 className='weather-details-clouds'>Clouds %{weather.clouds.all}</h1>
+              <h1 className='weather-details-visibility'>Visibility {(weather.visibility) / 1000} Km</h1>
+              <h1 className='weather-details-sunrise'>Sunrise {(new Date(weather.sys.sunrise * 1000).toLocaleTimeString())}</h1>
+              <h1 className='weather-details-sunset'>Sunset {(new Date(weather.sys.sunset * 1000).toLocaleTimeString())}</h1>
             </div>
-
-
           </div>
         }
       </div>
@@ -228,6 +232,7 @@ const Home = (props) => {
         loadOptions={loadOptions}
         value={search}
         onChange={handleSOnChange} /> */}
+      <footer className='footer'>Made with ❤️️ by <a href={GITHUB_URL}>Amenooooo1</a></footer>
     </div>
   )
 }

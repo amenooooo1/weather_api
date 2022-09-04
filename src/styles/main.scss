@@ -1,7 +1,7 @@
 @import '_variables.scss';
 
 body {
-  background-color: rgb(224, 229, 238);
+  background-color: rgb(228, 231, 237);
 }
 .form {
     border: 3px solid #f1f1f1;
@@ -43,7 +43,7 @@ body {
       margin: 8px 16px;
       align-items: center;  
       &-input{
-        width: 370px;
+        width: 65%;
         padding: 12px 20px;
         //margin: 8px 0;
         border: 1px solid #ccc;
@@ -107,7 +107,7 @@ body {
   display: flex;
   //flex-direction: row;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 20px;
   &-details {
     //display: flex;
     //flex-direction: column;
@@ -145,14 +145,15 @@ body {
       padding: 0 8px;
       
     }
-    &-feels, &-wind, &-humidity, &-pressure , &-clouds{
+    &-feels, &-wind, &-humidity, &-pressure, &-clouds, &-visibility, &-sunrise, &-sunset {
       border: 1px solid $borderColor;
       border-radius: 8px;
       padding: 8px;
       margin: 8px;
+      font-size: 1em;
+      font-weight: 700;
     }
     
-
   }
   &-context {
     display: flex;
@@ -166,8 +167,10 @@ body {
       justify-content: center;
       border: 1px solid $borderColor;
       border-radius: 8px;
-      font-size: 1.1em;
-      font-weight: 700;
+      &-title{
+        font-size: 1.1em;
+        font-weight: 700;
+      }
       &:hover > p{
         cursor: pointer;
         display: block;
@@ -177,7 +180,7 @@ body {
       &:active > p{
         cursor: pointer;
         display: block;
-        margin: -16px;
+        margin: -2px;
         color: red;
       }
       &-title{
@@ -192,7 +195,23 @@ p {
 
 
 h1 {
-  font-size: 1em;
-  font-weight: 700;
   margin: 8px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited{
+  color: black;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  //background-color: #f1f1f1;
+  color: black;
+  text-align: center;
 }
