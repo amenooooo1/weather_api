@@ -1,6 +1,6 @@
 Live preview
 
-https://weather-api-muhammed-emin.netlify.app/
+https://www.emintesbihcilik.xyz
 
 
 # Getting Started with Create React App
