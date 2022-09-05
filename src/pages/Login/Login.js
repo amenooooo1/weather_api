@@ -28,7 +28,7 @@ const Login = () => {
   return (
     <form className='form'>
       <div className="container">
-        <input className='username' type="username" placeholder="Enter Username" name="username" required onChange={(e) => setUser(e.target.value)}></input>
+        <input className='username' type="username" placeholder="Enter Username" name="username" required onChange={(e) => setUser((e.target.value).toLowerCase())}></input>
 
 
         <input className='password' type="password" placeholder="Enter Password" name="password" required onChange={(e) => setPass(e.target.value)}></input>
