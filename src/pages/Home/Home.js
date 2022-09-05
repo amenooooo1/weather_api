@@ -1,68 +1,25 @@
-import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import AsyncSelect from 'react-select/async';
 import Last3Context from '../../context/Last3Context';
 import withLoading from '../../hocs/withLoading';
 
 import { getWeather } from '../../services/api';
 import { useAuth } from '../../services/auth';
-import { GEO_API_URL, geoApiOptions } from '../../services/geoApiOptions';
-
-// const Home = () => {
-//     const [weather, setWeather] = useState(null);
-//     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-//     const fetchWeather = async () => {
-//         try {
-//             const res = await getWeather();
-//             if (res.status === 200) setWeather(res.data);
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-
-//     useEffect(() => {
-//         fetchWeather();
-//     }, []);
 
 
-//     const handleLogin = (e) => {
-//         e.preventDefault();
-//         setIsLoggedIn(true);
-//         localStorage.setItem('isLoggedIn', true);
-//     }
-
-//     return (
-//         <>
-//             {localStorage.getItem('isLoggedIn')
-//                 ? <div>
-//                     <h1>{weather.weather[0].main}</h1>
-//                 </div>
-//                 : <form className='form'>
-//                     <div className="container">
-//                         <label><b>Username</b></label>
-//                         <input className='username' type="text" placeholder="Enter Username" name="username" required></input>
-
-//                         <label><b>Password</b></label>
-//                         <input className='password' type="password" placeholder="Enter Password" name="password" required></input>
-
-//                         <button className='login-btn' onClick={(e) => handleLogin(e)}>Login</button>
-//                     </div>
-//                 </form>}
-//         </>
-//     );
-// }
 
 const Home = (props) => {
   const GITHUB_URL = 'https://github.com/amenooooo1';
 
   const [weather, setWeather] = useState(null);
-  const { weatherData, setWeatherData } = useContext(Last3Context);
   const [search, setSearch] = useState('');
   const [error, setError] = useState(null);
-  const [sunrise, setSunrise] = useState(null);
+  const { weatherData, setWeatherData } = useContext(Last3Context);
+
+  // const user = {
+  //   name: 'Muhammed Emin',
+  // }
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -95,9 +52,6 @@ const Home = (props) => {
     setSearch(e.target.value);
   }
 
-  // const handleSOnChange = (searchData) => {
-  //   setSearch(searchData);
-  // }
   const handleSearchSubmit = () => {
     if (search) {
       fetchWeather();
@@ -108,26 +62,7 @@ const Home = (props) => {
 
   const addToContext = (weatherItem) => {
     handleAdd(weatherItem);
-    // if (weatherData.length > 1) {
-    //   weatherData.find(item => (
-    //     item.name === weatherItem.name ? alert('iff') : alert('add')
-    //   ))
-    // }
-    // else {
-    //   console.log('else')
-    //   //handleAdd(weatherItem)
-    // }
-    // if (weatherData.length === 3) {
-    //   const newWeatherData = [...weatherData];
-    //   newWeatherData.shift();
-    //   newWeatherData.push(weatherItem);
-    //   setWeatherData(newWeatherData);
-    //   localStorage.setItem('weather', JSON.stringify(newWeatherData));
-    // } else {
-    //   const newData = [...weatherData, weatherItem];
-    //   setWeatherData(newData);
-    //   localStorage.setItem('weather', JSON.stringify(newData));
-    // }
+
   }
 
   const handleAdd = (weatherItem) => {
@@ -149,11 +84,6 @@ const Home = (props) => {
     setWeather(item);
   }
 
-  // const removeItem = (item) => {
-  //   const newData = weatherData.filter(i => i.name !== item.name);
-  //   setWeatherData(newData);
-  //   localStorage.setItem('weather', JSON.stringify(newData));
-  // }
 
   const removeItem = (item, index) => {
     const newData = [...weatherData];
@@ -164,24 +94,17 @@ const Home = (props) => {
 
   }
 
-  // const loadOptions = (inputValue) => {
-  //   return fetch(`${GEO_API_URL}/cities?minPopulation=1000000&namePrefix=${inputValue}`, geoApiOptions)
-  //     .then((response) => response.json())
-  //     .then((response) => console.log(response))
-  //     .catch(err => console.error(err));
-  // };
-
   useEffect(() => {
     // show last searched city's weather data
     if (localStorage.getItem('weather')) {
       setWeather(JSON.parse(localStorage.getItem('weather')).slice(-1)[0])
     }
     props.setLoading(false);
-  }, []);
+  }, [props]);
 
 
   return (
-    <div className='home'>
+    <div>
       <header>
         <div className='search'>
           <input className='search-input' type="text" placeholder="Enter a city" value={search} onChange={handleSearchChange} onKeyDown={(e) => {
@@ -194,7 +117,10 @@ const Home = (props) => {
             {error && <div>{error}</div>}
           </div>
         </div>
-        <button className='logout-btn' onClick={handleLogout}>Logout</button>
+        <div className='dark-light-logout'>
+          {/* <ThemeSwitcher /> */}
+          <button className='logout-btn' onClick={handleLogout}>Logout</button>
+        </div>
       </header>
       <div className='weather'>
         <div className='weather-context'>
@@ -207,6 +133,7 @@ const Home = (props) => {
         </div>
         {weather
           && <div className='weather-details'>
+            {/* error boundary test <h1 className='weather-details-name'>{user[0].name}</h1> */}
             <h1 className='weather-details-name'>{weather.name}</h1>
             <h1 className='weather-details-temp'>{(weather.main.temp - 273.15).toFixed()}°C</h1>
             <h1 className='weather-details-status'>{weather.weather[0].main}</h1>
@@ -226,12 +153,6 @@ const Home = (props) => {
           </div>
         }
       </div>
-      {/* <AsyncSelect
-        placeholder="Enter a city"
-        debounceTimeout={600}
-        loadOptions={loadOptions}
-        value={search}
-        onChange={handleSOnChange} /> */}
       <footer className='footer'>Made with ❤️️ by <a href={GITHUB_URL}>Amenooooo1</a></footer>
     </div>
   )

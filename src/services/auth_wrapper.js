@@ -1,5 +1,4 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import Home from '../pages/Home';
 
 const AuthWrapper = () => {
     const location = useLocation(); // current location

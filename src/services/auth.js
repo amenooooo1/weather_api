@@ -17,15 +17,8 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('isLoggedIn', false);
             setIsLoggedIn(false);
         }
-        return isLoggedIn;
     }
 
-    // const login = (user, pass) => {
-    //     setUser(user);
-    //     localStorage.setItem('isLoggedIn', true);
-    //     setIsLoggedIn(true);
-
-    // }
 
     const logout = () => {
         setUser(null)
